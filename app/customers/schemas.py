@@ -4,9 +4,10 @@ from pydantic import BaseModel, Field
 
 
 class CustomerBase(BaseModel):
-    name: str = Field(None, min_length=2, max_length=32)
-    phone: str = Field(None, min_length=10, max_length=16)
-    address: str = Field(None, max_length=256)
+    name: str | None = Field(None, min_length=2, max_length=32)
+    phone: str | None = Field(None, min_length=10, max_length=16)
+    address: str | None = Field(None, max_length=256)
+    loan_limit: int | None
 
 
 class CustomerCreate(CustomerBase):
