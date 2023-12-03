@@ -1,9 +1,11 @@
+import os
 import csv
 from datetime import datetime
 
 from app.database import get_db_context
 from app.messages.models import CustomerMessage
 from app.customers.models import Customer
+from app.users.models import User
 
 
 def seed_messages():
@@ -36,5 +38,23 @@ def seed_messages():
         print('Seed questions file not found')
 
 
+def create_admin(db):
+    email = os.getenv('ADMIN_EMAIL')
+    user = db.query(User).filter_by(email=email).first()
+    if user is None:
+        user = User(
+            name=os.getenv('ADMIN_NAME'),
+            password=os.getenv('ADMIN_PASSWORD'),
+            email=email
+        )
+        user.save(db)
+    return user
+
+
 if __name__ == '__main__':
+    with get_db_context() as db:
+        create_admin(db)
+    print('Admin created')
+
     seed_messages()
+    print('Messages seeded')
