@@ -13,6 +13,8 @@ from . import router, schemas, models as m
 async def read_messages(pagination: dict = Depends(get_pagination), db: Session = Depends(get_db)):
     return db.query(m.CustomerMessage).order_by(
         m.CustomerMessage.id.desc()
+    ).order_by(
+        m.CustomerMessage.is_urgent.desc()
     ).offset(
         pagination['offset']
     ).limit(
@@ -55,13 +57,19 @@ async def respond_to_message(message_id: int, message_data: schemas.MessageRespo
 async def read_assigned_messages(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     return db.query(m.CustomerMessage).filter_by(
         assigned_to=current_user.id, is_closed=False
+    ).order_by(
+        m.CustomerMessage.is_urgent.desc()
     ).all()
 
 
 # Claim messages to handle
 @router.post('/assign-me', response_model=list[schemas.MessageOut])
 async def assign_me_messages(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    messages = db.query(m.CustomerMessage).filter_by(assigned_to=None, is_closed=False).limit(10).all()
+    messages = db.query(m.CustomerMessage).filter_by(
+        assigned_to=None, is_closed=False
+    ).order_by(
+        m.CustomerMessage.is_urgent.desc()
+    ).limit(10).all()
     for message in messages:
         message.assigned_to = current_user.id
     db.add_all(messages)

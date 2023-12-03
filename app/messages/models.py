@@ -13,7 +13,7 @@ class CustomerMessage(Base, DbSaveMixin):
     customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
     body = Column(Text())
     response = Column(Text())
-    is_urgent = Column(Boolean(), default=False)
+    is_urgent = Column(Integer, default=0)
     assigned_to = Column(Integer, ForeignKey('users.id'), index=True)
     is_closed = Column(Boolean(), default=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)

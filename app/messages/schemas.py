@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class MessageBase(BaseModel):
     customer_id: int
     body: str
-    is_urgent: bool = False
+    is_urgent: int = Field(0, ge=0, le=1)
 
 
 class MessageCreate(MessageBase):
