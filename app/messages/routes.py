@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.utils.dependencies import get_pagination
+from app.customers.models import Customer
 from app.database import get_db
 
 from . import router, schemas, models as m
@@ -21,7 +22,7 @@ async def read_messages(pagination: dict = Depends(get_pagination), db: Session 
 
 @router.post('/', response_model=schemas.MessageOut, status_code=201)
 async def add_message(message_data: schemas.MessageCreate, db: Session = Depends(get_db)):
-    customer = db.query(m.Customer).filter_by(id=message_data.customer_id).first()
+    customer = db.query(Customer).filter_by(id=message_data.customer_id).first()
     if customer is None:
         raise HTTPException(status_code=400, detail='Customer with given ID not found')
     message = m.CustomerMessage(**message_data.model_dump())
