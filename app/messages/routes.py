@@ -10,12 +10,24 @@ from . import router, schemas, models as m
 
 
 @router.get('/', response_model=list[schemas.MessageOut], dependencies=[Depends(get_current_user)])
-async def read_messages(pagination: dict = Depends(get_pagination), db: Session = Depends(get_db)):
-    return db.query(m.CustomerMessage).order_by(
+async def read_messages(
+        pagination: dict = Depends(get_pagination),
+        db: Session = Depends(get_db),
+        customer_id: int = None
+):
+    query = db.query(m.CustomerMessage).order_by(
         m.CustomerMessage.id.desc()
     ).order_by(
         m.CustomerMessage.is_urgent.desc()
-    ).offset(
+    )
+
+    if customer_id:
+        customer = db.query(Customer).filter_by(id=customer_id).first()
+        if customer is None:
+            raise HTTPException(status_code=404, detail='Customer with given ID not found')
+        query = query.filter_by(customer_id=customer_id)
+
+    return query.offset(
         pagination['offset']
     ).limit(
         pagination['limit']
