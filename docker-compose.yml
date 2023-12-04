@@ -23,7 +23,7 @@ services:
     ports:
       - "7000:8000"
     depends_on:
-      - pgdb
+      - branch_pgdb
     command: bash -c "alembic upgrade head && python seed.py && uvicorn main:app --host 0.0.0.0"
 
 volumes:
