@@ -44,6 +44,31 @@ async def add_message(message_data: schemas.MessageCreate, db: Session = Depends
     return message
 
 
+# Fetch messages assigned to current agent
+@router.get('/assign-me', response_model=list[schemas.MessageOut])
+async def read_assigned_messages(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    return db.query(m.CustomerMessage).filter_by(
+        assigned_to=current_user.id, is_closed=False
+    ).order_by(
+        m.CustomerMessage.is_urgent.desc()
+    ).all()
+
+
+# Claim messages to handle
+@router.post('/assign-me', response_model=list[schemas.MessageOut])
+async def assign_me_messages(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    messages = db.query(m.CustomerMessage).filter_by(
+        assigned_to=None, is_closed=False
+    ).order_by(
+        m.CustomerMessage.is_urgent.desc()
+    ).limit(5).all()
+    for message in messages:
+        message.assigned_to = current_user.id
+    db.add_all(messages)
+    db.commit()
+    return messages
+
+
 @router.get('/{message_id}', response_model=schemas.MessageOut, dependencies=[Depends(get_current_user)])
 async def read_message(message_id: int, db: Session = Depends(get_db)):
     message = db.query(m.CustomerMessage).filter_by(id=message_id).first()
@@ -62,28 +87,3 @@ async def respond_to_message(message_id: int, message_data: schemas.MessageRespo
     message.is_closed = True
     message.save(db)
     return message
-
-
-# Fetch messages assigned to current agent
-@router.get('/assign-me', response_model=list[schemas.MessageOut])
-async def read_assigned_messages(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    return db.query(m.CustomerMessage).filter_by(
-        assigned_to=current_user.id, is_closed=False
-    ).order_by(
-        m.CustomerMessage.is_urgent.desc()
-    ).all()
-
-
-# Claim messages to handle
-@router.post('/assign-me', response_model=list[schemas.MessageOut])
-async def assign_me_messages(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    messages = db.query(m.CustomerMessage).filter_by(
-        assigned_to=None, is_closed=False
-    ).order_by(
-        m.CustomerMessage.is_urgent.desc()
-    ).limit(10).all()
-    for message in messages:
-        message.assigned_to = current_user.id
-    db.add_all(messages)
-    db.commit()
-    return messages
