@@ -17,7 +17,7 @@ class MessageCreate(MessageBase):
 
 
 class MessageResponse(BaseModel):
-    response: str
+    response: str = Field(..., min_length=1)
 
 
 class MessageOut(MessageBase):

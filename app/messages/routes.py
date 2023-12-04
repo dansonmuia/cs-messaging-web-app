@@ -13,7 +13,7 @@ from . import router, schemas, models as m
 async def read_messages(
         pagination: dict = Depends(get_pagination),
         db: Session = Depends(get_db),
-        customer_id: int = None
+        customer_id: int | None = None
 ):
     query = db.query(m.CustomerMessage).order_by(
         m.CustomerMessage.id.desc()
@@ -77,7 +77,7 @@ async def read_message(message_id: int, db: Session = Depends(get_db)):
     return message
 
 
-@router.put('/{message_id}', response_model=schemas.MessageOut, dependencies=[Depends(get_current_user)])
+@router.put('/{message_id}', response_model=schemas.MessageOut, dependencies=[Depends(get_current_user)], status_code=201)
 async def respond_to_message(message_id: int, message_data: schemas.MessageResponse, db: Session = Depends(get_db)):
     message = db.query(m.CustomerMessage).filter_by(id=message_id).first()
     if message is None:
