@@ -6,7 +6,7 @@ from app import auth, users, customers, messages
 # Import Base here for discovery by alembic
 from app.database import Base
 
-allowed_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+allowed_origins = ["http://localhost:3000", "http://127.0.0.1:3000", "https://branch.myduka.online"]
 
 app = FastAPI()
 
