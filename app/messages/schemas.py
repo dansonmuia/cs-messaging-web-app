@@ -2,6 +2,9 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.users.schemas import UserOut
+from app.customers.schemas import CustomerOut
+
 
 class MessageBase(BaseModel):
     customer_id: int
@@ -17,9 +20,12 @@ class MessageResponse(BaseModel):
     response: str
 
 
-class MessageOut(MessageBase, MessageResponse):
+class MessageOut(MessageBase):
     id: int
+    response: str | None
     assigned_to: int | None = None
+    assigned_to_user: UserOut | None
+    customer: CustomerOut | None
     is_closed: bool
     created_at: datetime
 

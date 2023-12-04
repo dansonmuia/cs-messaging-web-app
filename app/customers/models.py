@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 from app.utils.db import DbSaveMixin
@@ -16,3 +17,4 @@ class Customer(Base, DbSaveMixin):
     # Loan limit in KSH
     loan_limit = Column(Integer, default=500)
     created_at = Column(DateTime, default=datetime.utcnow)
+    messages = relationship("CustomerMessage", backref="customer", lazy="dynamic")

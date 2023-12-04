@@ -2,6 +2,7 @@ from datetime import datetime
 
 import bcrypt
 from sqlalchemy import Column, String, DateTime, Integer
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 from app.utils.db import DbSaveMixin
@@ -16,6 +17,7 @@ class User(DbSaveMixin, Base):
     password_hash = Column(String(256))
     is_active = Column(String(16), default=True)
     created_at = Column(DateTime(), default=datetime.utcnow, index=True)
+    assigned_messages = relationship("CustomerMessage", backref="assigned_to_user", lazy="dynamic")
 
     @property
     def password(self):
