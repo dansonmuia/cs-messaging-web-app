@@ -16,9 +16,9 @@ async def read_messages(
         customer_id: int | None = None
 ):
     query = db.query(m.CustomerMessage).order_by(
-        m.CustomerMessage.id.desc()
-    ).order_by(
         m.CustomerMessage.is_urgent.desc()
+    ).order_by(
+        m.CustomerMessage.id.desc()
     )
 
     if customer_id:
