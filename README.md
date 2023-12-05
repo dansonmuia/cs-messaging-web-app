@@ -1,5 +1,6 @@
 # cs-messaging-web-app
-Customer Service Messaging App
+Customer Service Messaging App API.  
+The accompanying frontend is here: https://github.com/dansonmuia/cs-messaging-frontend
 
 ## Description
 This is a simple API to simulate a customer service messaging app. It is built using FastAPI and a react.js frontend.
