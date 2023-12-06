@@ -56,7 +56,7 @@ export ADMIN_PASSWORD=your_admin_password
 `python seed.py`  
 
 7. Run the app:  
-`uvicorn app.main:app`  
+`uvicorn main:app`  
 
 Open the app in your browser or postman: http://localhost:8000
 Docs will be here: http://localhost:8000/docs
